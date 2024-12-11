@@ -4,23 +4,37 @@
 
 void registrarLibros(struct Libro libro[20], int i)
 {
-    int len;
-    int opc1;
-    printf("Ingrese el ID del Libro  %d:\n", i + 1);
-    scanf("%d", &libro[i].ID);
-    printf("Ingrese el titulo %d del Libro:\n", i + 1);
+    int len, opc1, idDuplicado;
+    do {
+        idDuplicado = 0; // Reiniciamos el indicador de duplicado
+        printf("Ingrese el ID del Libro %d:\n", i + 1);
+        scanf("%d", &libro[i].ID);
+
+        // Verificar si el ID ya existe
+        for (int j = 0; j < i; j++) {
+            if (libro[i].ID == libro[j].ID) {
+                idDuplicado = 1;
+                printf("El ID %d ya existe. Ingrese un ID unico.\n", libro[i].ID);
+                break;
+            }
+        }
+    } while (idDuplicado);
+
+    printf("Ingrese el titulo del Libro %d:\n", i + 1);
     fflush(stdin);
-    fgets(libro[i].Título, 100, stdin);
-    
-    len = strlen(libro[i].Título) - 1;
-    libro[i].Título[len] = '\0';
+    fgets(libro[i].Titulo, 100, stdin);
+    len = strlen(libro[i].Titulo) - 1;
+    libro[i].Titulo[len] = '\0';
+
     printf("Ingrese el autor del Libro %d:\n", i + 1);
     fflush(stdin);
     fgets(libro[i].Autor, 50, stdin);
     len = strlen(libro[i].Autor) - 1;
     libro[i].Autor[len] = '\0';
+
     printf("Ingrese el anio del Libro %d:\n", i + 1);
-    scanf("%d", &libro[i].Año);
+    scanf("%d", &libro[i].Anio);
+
     printf("Seleccione el Estado del libro (1. Disponible, 2. Prestado): ");
     scanf("%d", &opc1);
     switch (opc1)
@@ -32,7 +46,7 @@ void registrarLibros(struct Libro libro[20], int i)
         strcpy(libro[i].Estado, "Prestado");
         break;
     default:
-        printf("\nNúmero incorrecto. Se asignará 'Disponible' por defecto.\n");
+        printf("\nNumero incorrecto. Se asignara 'Disponible' por defecto.\n");
         strcpy(libro[i].Estado, "Disponible");
     }
 }
@@ -46,30 +60,9 @@ void mostrarLibros(struct Libro libro[20], int n)
             printf("|--------------------------------------------------------------------|\n");
             printf("|Id\t\tTitulo\t\tAutor\t\tAnio\t\tEstado|\n");
             printf("|--------------------------------------------------------------------|\n");
-            printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Título, libro[i].Autor, libro[i].Año, libro[i].Estado);
+            printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Titulo, libro[i].Autor, libro[i].Anio, libro[i].Estado);
         }
     }
-}
-
-void buscarLibroPorId(struct Libro libro[20], int n)
-{
-    int id;
-    printf("Ingrese el ID del libro a buscar: ");
-    scanf("%d", &id);
-
-    for (int i = 0; i < n; i++)
-    {
-        if (libro[i].ID == id)
-        {
-            printf("\nLibro encontrado:\n");
-            printf("|--------------------------------------------------------------------|\n");
-            printf("|Id\t\tTitulo\t\tAutor\t\tAnio\t\tEstado|\n");
-            printf("|--------------------------------------------------------------------|\n");
-            printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Título, libro[i].Autor, libro[i].Año, libro[i].Estado);
-            return;
-        }
-    }
-    printf("\nNo se encontró un libro con el ID %d.\n", id);
 }
 
 void buscarLibroPorTituloOId(struct Libro libro[20], int n)
@@ -85,7 +78,23 @@ void buscarLibroPorTituloOId(struct Libro libro[20], int n)
     {
     case 1:
     {
-        buscarLibroPorId(libro, n);
+        int id;
+        printf("Ingrese el ID del libro a buscar: ");
+        scanf("%d", &id);
+
+        for (int i = 0; i < n; i++)
+        {
+            if (libro[i].ID == id)
+            {
+                printf("\nLibro encontrado:\n");
+                printf("|--------------------------------------------------------------------|\n");
+                printf("|Id\t\tTitulo\t\tAutor\t\tAnio\t\tEstado|\n");
+                printf("|--------------------------------------------------------------------|\n");
+                printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Titulo, libro[i].Autor, libro[i].Anio, libro[i].Estado);
+                return;
+            }
+        }
+        printf("\nNo se encontro un libro con el ID %d.\n", id);
         break;
     }
     case 2:
@@ -98,13 +107,13 @@ void buscarLibroPorTituloOId(struct Libro libro[20], int n)
 
         for (int i = 0; i < n; i++)
         {
-            if (strcmp(libro[i].Título, titulo) == 0)
+            if (strcmp(libro[i].Titulo, titulo) == 0)
             {
                 printf("\nLibro encontrado:\n");
                 printf("|--------------------------------------------------------------------|\n");
                 printf("|Id\t\tTitulo\t\tAutor\t\tAnio\t\tEstado|\n");
                 printf("|--------------------------------------------------------------------|\n");
-                printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Título, libro[i].Autor, libro[i].Año, libro[i].Estado);
+                printf("|%d\t\t%s\t\t%s\t\t%d\t\t%s|\n", libro[i].ID, libro[i].Titulo, libro[i].Autor, libro[i].Anio, libro[i].Estado);
                 return;
             }
         }
@@ -114,8 +123,7 @@ void buscarLibroPorTituloOId(struct Libro libro[20], int n)
     default:
         printf("Opcion invalida. Volviendo al menu principal.\n");
     }
-}
-void cambiarEstado(struct Libro libro[20], int n) {
+}void cambiarEstado(struct Libro libro[20], int n) {
     mostrarLibros(libro, n);
     int id, opc;
     printf("Ingrese el ID del Libro que desea cambiar: ");
@@ -136,36 +144,32 @@ void cambiarEstado(struct Libro libro[20], int n) {
                     printf("Estado actualizado a 'Prestado'.\n");
                     break;
                 default:
-                    printf("Opción inválida. El estado no se ha cambiado.\n");
+                    printf("Opcion invalida. El estado no se ha cambiado.\n");
             }
             encontrado = 1;
             break;
         }
     }
     if (!encontrado) {
-        printf("No se encontró un libro con el ID %d.\n", id);
+        printf("No se encontro un libro con el ID %d.\n", id);
     }
 }
 
-int eliminarLibros(struct Libro libro[20], int n)
-{
+int eliminarLibros(struct Libro libro[20], int n) {
     mostrarLibros(libro, n);
     int id;
     printf("\nIngrese el ID del libro a eliminar: ");
     scanf("%d", &id);
 
-    for (int i = 0; i < n; i++)
-    {
-        if (libro[i].ID == id)
-        {
-            for (int j = i; j < n - 1; j++)
-            {
+    for (int i = 0; i < n; i++) {
+        if (libro[i].ID == id) {
+            for (int j = i; j < n - 1; j++) {
                 libro[j] = libro[j + 1];
             }
             printf("Libro con ID %d eliminado.\n", id);
             return n - 1;
         }
     }
-    printf("No se encontró un libro con el ID %d.\n", id);
+    printf("No se encontro un libro con el ID %d.\n", id);
     return n;
 }
